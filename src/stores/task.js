@@ -14,7 +14,7 @@ export const useTaskStore = defineStore("taskStore", () => {
 
   const createTask = async (userId, taskName) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("tasks")
         .insert({ user_id: userId, title: taskName });
 
@@ -23,13 +23,7 @@ export const useTaskStore = defineStore("taskStore", () => {
         return null;
       }
 
-      // Check if data is not null or undefined before accessing its properties
-      if (data && data.length > 0) {
-        return data[0];
-      } else {
-        console.error("Task data is null or empty.");
-        return null;
-      }
+      fetchTasks();
     } catch (error) {
       console.error("Error creating task: ", error);
       return null;

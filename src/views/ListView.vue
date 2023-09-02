@@ -28,29 +28,22 @@
     </ul>
   </div>
 </template>
-
 <script>
 import { ref, computed, onMounted, watch } from "vue";
 import { useTaskStore } from "@/stores/task";
 import { useUserStore } from "@/stores/user";
-
 export default {
   setup() {
     const title = ref("");
     const editingTaskId = ref(null);
     const taskStore = useTaskStore();
     const userStore = useUserStore();
-
     const tasks = computed(() => taskStore.tasks);
-
     const addTask = async () => {
       if (title.value.trim() !== "") {
         try {
-          await userStore.user;
-
-          const user = userStore.user.value;
+          const user = userStore.user.user;
           const userId = user ? user.id : null;
-
           if (userId) {
             taskStore.createTask(userId, title.value);
             title.value = "";
@@ -62,35 +55,28 @@ export default {
         }
       }
     };
-
     const deleteTask = (taskId) => {
       taskStore.deleteTask(taskId);
     };
-
     const startEditingTask = (task) => {
       editingTaskId.value = task.id;
     };
-
     const updateTask = (task) => {
       if (task.title.trim() !== "") {
         taskStore.updateTask(task.id, task.title);
         editingTaskId.value = null;
       }
     };
-
     onMounted(async () => {
       await taskStore.fetchTasks();
-
-      await userStore.fetchUser();
-
-      const user = userStore.user.value;
+      // await userStore.fetchUser();
+      const user = userStore.user?.user;
       if (user) {
         console.log("User object:", user);
       } else {
         console.error("User information not available.");
       }
     });
-
     watch(
       () => userStore.user,
       () => {
@@ -99,7 +85,6 @@ export default {
         }
       }
     );
-
     return {
       title,
       editingTaskId,
@@ -112,7 +97,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .todo-list {
   display: flex;
@@ -123,12 +107,10 @@ export default {
   background-color: #f8f8f8;
   background-image: linear-gradient(to bottom right, #ff5722, #2196f3);
 }
-
 .task-form {
   display: flex;
   margin-bottom: 20px;
 }
-
 input[type="text"] {
   flex: 1;
   padding: 10px;
@@ -136,7 +118,6 @@ input[type="text"] {
   border-radius: 4px;
   font-size: 16px;
 }
-
 button {
   background-color: #007bff;
   color: #fff;
@@ -146,24 +127,20 @@ button {
   cursor: pointer;
   margin-left: 10px;
 }
-
 ul {
   list-style: none;
   padding: 0;
 }
-
 li {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
-
 .task-actions {
   display: flex;
   align-items: center;
 }
-
 button {
   background-color: #dc3545;
   color: #fff;
@@ -173,7 +150,6 @@ button {
   cursor: pointer;
   margin-left: 10px;
 }
-
 input[type="text"] {
   flex: 1;
   padding: 5px;

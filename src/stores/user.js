@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import supabase from "../lib/supabase";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const authenticationStatus = ref(false);
 
@@ -13,9 +13,10 @@ export const useUserStore = defineStore("userStore", () => {
       password: password,
     });
 
-    if (error) console.log("Error: ", error);
-    else {
-      "Data: ", console.log(data);
+    if (error) {
+      console.log("Error", error);
+    } else {
+      console.log("Data", data);
       user.value = data;
       authenticationStatus.value = true;
     }
@@ -26,22 +27,20 @@ export const useUserStore = defineStore("userStore", () => {
       email: email,
       password: password,
     });
-
-    if (error) console.log("Error: ", error);
-    else {
-      "Data: ", console.log(data);
+    if (error) {
+      console.log("Error", error);
+    } else {
+      console.log("Data", data);
       user.value = data;
       authenticationStatus.value = true;
     }
   };
 
+  const resetAuthenticationStatus = () => {
+    authenticationStatus.value = false;
+  };
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("logout has been successful");
-    }
+    await supabase.auth.signOut();
     authenticationStatus.value = false;
   };
 
@@ -49,7 +48,8 @@ export const useUserStore = defineStore("userStore", () => {
     user,
     createNewUser,
     signIn,
-    signOut,
     authenticationStatus,
+    signOut,
+    resetAuthenticationStatus,
   };
 });
